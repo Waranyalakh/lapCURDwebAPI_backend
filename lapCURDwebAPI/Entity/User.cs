@@ -12,12 +12,12 @@ namespace lapCURDwebAPI.Entity
         
         public string Name { get; set; } = string.Empty;
         
-        //[Required]
-        //public string UserName { get; set; } = string.Empty;
+       [Required]
+        public string UserName { get; set; } = string.Empty;
 
         // เปลี่ยนประเภทของ PassWord เป็น PassWordHash และใช้ประเภท string
-        //[Required]
-        //string PassWordHash { get; set; } = string.Empty;
+        [Required]
+        public string PassWordHash { get; set; } = string.Empty;
     }
     /*public class UserModel 
     {

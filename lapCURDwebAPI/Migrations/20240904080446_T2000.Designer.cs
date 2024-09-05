@@ -11,8 +11,8 @@ using lapCURDwebAPI.Data;
 namespace lapCURDwebAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240828103638_test")]
-    partial class test
+    [Migration("20240904080446_T2000")]
+    partial class T2000
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,14 @@ namespace lapCURDwebAPI.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PassWordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
