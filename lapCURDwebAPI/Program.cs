@@ -11,7 +11,7 @@ internal class Program
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        
         // Add CORS policy
         builder.Services.AddCors(options =>
         {
@@ -21,7 +21,7 @@ internal class Program
                       .AllowAnyMethod()
                       .AllowAnyHeader();
             });
-
+            
         });
 
         
@@ -69,7 +69,7 @@ builder.Services.AddAuthentication(options =>
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-
+        // Add DbContext
         builder.Services.AddDbContext<DataContext>(options =>
         {
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));

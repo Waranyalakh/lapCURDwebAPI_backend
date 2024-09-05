@@ -7,21 +7,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace lapCURDwebAPI.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(repositoryUser repositoryUsers) : ControllerBase
+    public class UserController : ControllerBase
     {
+        private readonly repositoryUser _repositoryUsers;
 
+        public UserController(repositoryUser repositoryUsers)
+        {
+            _repositoryUsers = repositoryUsers;
+        }
 
         //---Get all---//
-        
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<List<User>>> GetAllUser()
         {
             try
             {
-                var users = await repositoryUsers.GetAllUsersAsync();
+                var users = await _repositoryUsers.GetAllUsersAsync();
                 if (users == null || users.Count == 0)
                 {
                     return NotFound("No users found.");
@@ -31,7 +35,6 @@ namespace lapCURDwebAPI.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception (หากต้องการ สามารถใช้ ILogger บันทึก log ข้อผิดพลาดได้)
                 return StatusCode(500, "Internal server error: " + ex.Message);
             }
         }
@@ -42,7 +45,7 @@ namespace lapCURDwebAPI.Controllers
         {
             try
             {
-                var user = await repositoryUsers.GetUserAsync(Id);
+                var user = await _repositoryUsers.GetUserAsync(Id);
                 if (user == null)
                 {
                     return NotFound("Data not found");
@@ -62,7 +65,10 @@ namespace lapCURDwebAPI.Controllers
         {
             try
             {
-                var addedUser = await repositoryUsers.AddUserAsynce(user);
+                // แฮชรหัสผ่านก่อนที่จะบันทึกลงในฐานข้อมูล
+                user.PassWordHash = BCrypt.Net.BCrypt.HashPassword(user.PassWordHash);
+
+                var addedUser = await _repositoryUsers.AddUserAsynce(user);
                 return CreatedAtAction(nameof(GetUser), new { Id = addedUser.Id }, addedUser);
             }
             catch (Exception ex)
@@ -82,14 +88,19 @@ namespace lapCURDwebAPI.Controllers
 
             try
             {
-                var dbUser = await repositoryUsers.GetUserAsync(updateUser.Id);
+                var dbUser = await _repositoryUsers.GetUserAsync(updateUser.Id);
                 if (dbUser == null)
                 {
                     return NotFound("Data not found.");
                 }
 
                 dbUser.Name = updateUser.Name;
-                await repositoryUsers.UpdateAsync(dbUser);
+                // อัปเดตการแฮชรหัสผ่านถ้ามีการเปลี่ยนแปลง
+                if (!string.IsNullOrEmpty(updateUser.PassWordHash))
+                {
+                    dbUser.PassWordHash = BCrypt.Net.BCrypt.HashPassword(updateUser.PassWordHash);
+                }
+                await _repositoryUsers.UpdateAsync(dbUser);
 
                 return Ok(dbUser);
             }
@@ -105,13 +116,13 @@ namespace lapCURDwebAPI.Controllers
         {
             try
             {
-                var dbUser = await repositoryUsers.GetUserAsync(Id);
+                var dbUser = await _repositoryUsers.GetUserAsync(Id);
                 if (dbUser == null)
                 {
                     return NotFound("Data not found.");
                 }
 
-                await repositoryUsers.DeleteAsync(dbUser);
+                await _repositoryUsers.DeleteAsync(dbUser);
                 return Ok(dbUser);
             }
             catch (Exception ex)
