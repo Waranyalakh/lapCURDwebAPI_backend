@@ -11,7 +11,7 @@ internal class Program
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        
         // Add CORS policy
         builder.Services.AddCors(options =>
         {
@@ -21,7 +21,7 @@ internal class Program
                       .AllowAnyMethod()
                       .AllowAnyHeader();
             });
-
+            
         });
 
         

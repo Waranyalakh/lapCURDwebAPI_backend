@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace lapCURDwebAPI.Entity
 {
+    
     public class User
     {
         [Key]
