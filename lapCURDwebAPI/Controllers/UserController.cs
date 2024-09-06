@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace lapCURDwebAPI.Controllers
 {
-    
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -66,7 +66,7 @@ namespace lapCURDwebAPI.Controllers
             try
             {
                 // แฮชรหัสผ่านก่อนที่จะบันทึกลงในฐานข้อมูล
-                user.PassWordHash = BCrypt.Net.BCrypt.HashPassword(user.PassWordHash);
+                user.PassWordHash = PasswordHelper.HashPassword(user.PassWordHash);
 
                 var addedUser = await _repositoryUsers.AddUserAsynce(user);
                 return CreatedAtAction(nameof(GetUser), new { Id = addedUser.Id }, addedUser);

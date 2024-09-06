@@ -1,10 +1,11 @@
 ﻿using lapCURDwebAPI.Entity;
 using lapCURDwebAPI.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace lapCURDwebAPI.Controllers
 {
-
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ItemController(repositoryItem repositoryItems) : ControllerBase

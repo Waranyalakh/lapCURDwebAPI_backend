@@ -1,4 +1,5 @@
-﻿using lapCURDwebAPI.Model;
+﻿using lapCURDwebAPI.Entity;
+using lapCURDwebAPI.Model;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,7 +15,7 @@ namespace lapCURDwebAPI.Services
             _configuration = configuration;
         }
 
-        public string GenerateToken(LoginRequest loginRequest)
+        public string GenerateToken(User loginRequest)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var claims = new[]

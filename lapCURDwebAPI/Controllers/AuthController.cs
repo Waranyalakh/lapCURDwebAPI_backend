@@ -2,9 +2,9 @@
 using lapCURDwebAPI.Entity;
 using lapCURDwebAPI.Model;
 using lapCURDwebAPI.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace lapCURDwebAPI.Controllers
 {
@@ -13,20 +13,20 @@ namespace lapCURDwebAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly TokenService _tokenService;
-        private readonly DataContext _dbContext;  // Inject DbContext ของคุณ
+        private readonly DataContext _dbContext;
 
         public AuthController(TokenService tokenService, DataContext dbContext)
         {
             _tokenService = tokenService;
             _dbContext = dbContext;
         }
-        
+
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest loginRequest)
+        public IActionResult Login([FromBody] LoginRequest loginUser)
         {
             // ดึงข้อมูลผู้ใช้จากฐานข้อมูลโดยใช้ชื่อผู้ใช้ที่ส่งมา
             var user = _dbContext.Users
-                .SingleOrDefault(u => u.UserName == loginRequest.UserName);
+                .FirstOrDefault(u => u.UserName == loginUser.UserName);
 
             if (user == null)
             {
@@ -34,13 +34,15 @@ namespace lapCURDwebAPI.Controllers
             }
 
             // ตรวจสอบรหัสผ่านที่ให้มากับรหัสผ่านที่เก็บในฐานข้อมูล
-            if (BCrypt.Net.BCrypt.Verify(loginRequest.PassWord, user.PassWordHash))
+            if (PasswordHelper.VerifyPassword(loginUser.PassWord, user.PassWordHash))
             {
-                var token = _tokenService.GenerateToken(loginRequest);
+                var token = _tokenService.GenerateToken(user);
                 return Ok(new { Token = token });
             }
 
             return Unauthorized(); // รหัสผ่านไม่ถูกต้อง
         }
+       
+
     }
 }
