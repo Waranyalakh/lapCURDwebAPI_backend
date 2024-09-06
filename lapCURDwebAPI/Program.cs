@@ -10,6 +10,7 @@ internal class Program
 {
     private static void Main(string[] args)
     {
+
         var builder = WebApplication.CreateBuilder(args);
 
         // Add CORS policy
@@ -45,13 +46,13 @@ internal class Program
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
                     ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
+                    ValidateIssuerSigningKey = false,
                     ValidIssuer = "yourIssuer",
                     ValidAudience = "yourAudience",
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("yourSecretKey"))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
                 };
             });
 
