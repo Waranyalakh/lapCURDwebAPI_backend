@@ -24,25 +24,37 @@ namespace lapCURDwebAPI.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest loginUser)
         {
-            // ดึงข้อมูลผู้ใช้จากฐานข้อมูลโดยใช้ชื่อผู้ใช้ที่ส่งมา
-            var user = _dbContext.Users
-                .FirstOrDefault(u => u.UserName == loginUser.UserName);
-
-            if (user == null)
+            try
             {
-                return Unauthorized(); // ไม่พบผู้ใช้
-            }
+                // ดึงข้อมูลผู้ใช้จากฐานข้อมูลโดยใช้ชื่อผู้ใช้ที่ส่งมา
+                var user = _dbContext.Users
+                    .FirstOrDefault(u => u.UserName == loginUser.UserName);
 
-            // ตรวจสอบรหัสผ่านที่ให้มากับรหัสผ่านที่เก็บในฐานข้อมูล
-            if (PasswordHelper.VerifyPassword(loginUser.PassWord, user.PassWordHash))
-            {
+                if (user == null)
+                {
+                    return BadRequest(new { message = "ไม่พบผู้ใช้" }); // ข้อมูลชื่อผู้ใช้ไม่ถูกต้อง
+                }
+
+                // ตรวจสอบรหัสผ่านที่ให้มากับรหัสผ่านที่เก็บในฐานข้อมูล
+                if (!PasswordHelper.VerifyPassword(loginUser.PassWord, user.PassWordHash))
+                {
+                    return BadRequest(new { message = "รหัสผ่านไม่ถูกต้อง" }); // รหัสผ่านไม่ตรงกับที่เก็บ
+                }
+
+                // สร้าง token เมื่อข้อมูลถูกต้อง
                 var token = _tokenService.GenerateToken(user);
-                return Ok(new { Token = token });
-            }
+                return Ok(new { Token = token }); // ส่งกลับ token
 
-            return Unauthorized(); // รหัสผ่านไม่ถูกต้อง
+            }
+            catch (Exception ex)
+            {
+                // จัดการข้อผิดพลาดที่ไม่คาดคิด
+                return StatusCode(500, new { message = "เกิดข้อผิดพลาดภายในระบบ", error = ex.Message });
+            }
         }
-       
+
+
+
 
     }
 }

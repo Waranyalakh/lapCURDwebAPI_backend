@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace lapCURDwebAPI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -40,6 +40,7 @@ namespace lapCURDwebAPI.Controllers
         }
 
         //--- GET ID ---//
+
         [HttpGet("{Id}")]
         public async Task<ActionResult<User>> GetUser(int Id)
         {
@@ -65,17 +66,27 @@ namespace lapCURDwebAPI.Controllers
         {
             try
             {
+                // ตรวจสอบข้อมูลผู้ใช้ก่อน (เช่น ชื่อผู้ใช้, รหัสผ่าน ฯลฯ)
+                if (string.IsNullOrEmpty(user.UserName) || string.IsNullOrEmpty(user.PassWordHash))
+                {
+                    return BadRequest(new { message = "ชื่อผู้ใช้หรือรหัสผ่านไม่สามารถเป็นค่าว่างได้" });
+                }
+
                 // แฮชรหัสผ่านก่อนที่จะบันทึกลงในฐานข้อมูล
                 user.PassWordHash = PasswordHelper.HashPassword(user.PassWordHash);
 
                 var addedUser = await _repositoryUsers.AddUserAsynce(user);
+
+                // หากการเพิ่มผู้ใช้สำเร็จ ส่งคืนข้อมูลผู้ใช้ที่เพิ่ม
                 return CreatedAtAction(nameof(GetUser), new { Id = addedUser.Id }, addedUser);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error: " + ex.Message);
+                // จัดการข้อผิดพลาดภายในระบบ
+                return StatusCode(500, new { message = "เกิดข้อผิดพลาดภายในระบบ", error = ex.Message });
             }
         }
+
 
         //--- Put ---//
         [HttpPut("{id}")]

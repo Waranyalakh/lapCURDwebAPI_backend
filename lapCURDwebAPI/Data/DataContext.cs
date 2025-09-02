@@ -1,4 +1,5 @@
 ﻿using lapCURDwebAPI.Entity;
+using lapCURDwebAPI.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace lapCURDwebAPI.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<Useritem> Useritems { get; set; }    
+      
        
     }
 }
