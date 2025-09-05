@@ -91,27 +91,34 @@ namespace lapCURDwebAPI.Controllers
         // Method สำหรับคำนวณเกรด แบบตัวหนังสือ
         private (int minScore, int maxScore, string message) GetScoreRangeForGrade(string grade)
         {
-            switch (grade.ToUpper())
-            {
-                case "A":
-                    return (80, 100, "เกรด A");
-                case "B+":
-                    return (75, 79, "เกรด B+");
-                case "B":
-                    return (70, 74, "เกรด B");
-                case "C+":
-                    return (65, 69, "เกรด C+");
-                case "C":
-                    return (60, 64, "เกรด C");
-                case "D+":
-                    return (55, 59, "เกรด D+");
-                case "D":
-                    return (50, 54, "เกรด D");
-                case "F":
-                    return (0, 49, "เกรด F");
-                default:
-                    return (0, 0, "ไม่มีเกรดดังกล่าว"); // หรือสามารถส่งคืนข้อผิดพลาดที่เหมาะสม
-            }
+           
+              try {
+                switch (grade.ToUpper())
+                {
+                    case "A":
+                        return (80, 100, "เกรด A");
+                    case "B+":
+                        return (75, 79, "เกรด B+");
+                    case "B":
+                        return (70, 74, "เกรด B");
+                    case "C+":
+                        return (65, 69, "เกรด C+");
+                    case "C":
+                        return (60, 64, "เกรด C");
+                    case "D+":
+                        return (55, 59, "เกรด D+");
+                    case "D":
+                        return (50, 54, "เกรด D");
+                    case "F":
+                        return (0, 49, "เกรด F");
+                    default:
+                        return (0, 0, "ไม่มีข้อมูลดั่งกล่าว");
+                }
+              
+                }catch (ArgumentException ex) {
+                        return (0, 0, "Error");
+                    }
+            
         }
 
     }
