@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace lapCURDwebAPI.Controllers
 {
-    [Authorize]
+
     [Route("api/[controller]")]
     [ApiController]
     public class ItemController(repositoryItem repositoryItems) : ControllerBase
@@ -21,10 +21,10 @@ namespace lapCURDwebAPI.Controllers
         }
         //--------------- GET ID --------------------------------------//
         [HttpGet("{Id}")]
-        public async Task<ActionResult<Item>> GetItem(int Id) 
+        public async Task<ActionResult<Item>> GetItem(int Id)
         {
             var items = await repositoryItems.GetItemsAsync(Id);
-            if (items == null) 
+            if (items == null)
             {
                 return BadRequest("Data not found.");
             }
@@ -34,7 +34,7 @@ namespace lapCURDwebAPI.Controllers
         //--------------- Post ---------------------------------------//
 
         [HttpPost]
-        public async Task<ActionResult<Item>> AddItems(Item items) 
+        public async Task<ActionResult<Item>> AddItems(Item items)
         {
             var addItem = await repositoryItems.AddItemAsync(items);
             return Ok(addItem);
@@ -42,10 +42,11 @@ namespace lapCURDwebAPI.Controllers
 
         //-------------- Put ----------------------------------------//
 
-        [HttpPut]
+        [HttpPut("{id}")]
 
-        public async Task<ActionResult<Item>> UpdateItem(Item updateItems) 
+        public async Task<ActionResult<Item>> UpdateItem(int id, [FromBody] Item updateItems) 
         {
+  
             var dbItem = await repositoryItems.GetItemsAsync(updateItems.Id);
             if (dbItem == null)
                 return BadRequest("data not found.");
@@ -58,14 +59,14 @@ namespace lapCURDwebAPI.Controllers
         }
 
         //------------ Delete -----------------------------------//
-        [HttpDelete]
-        public async Task<ActionResult<Item>> DeleteItem(Item updateItems)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Item>> DeleteItem(int id)
         {
-            var dbItem = await repositoryItems.GetItemsAsync(updateItems.Id);
+            var dbItem = await repositoryItems.GetItemsAsync(id);
             if (dbItem == null)
                 return BadRequest("data not found.");
 
-            await repositoryItems.DeleteAsync(dbItem);//โค้ดนี้คืออะไรเอ่ย??น่าจะจำเป็น พอไม่มีบรรทัดนี้ โค้ดไม่สามารถ ลบ หรือ อัพเดท ได้ด้วย
+            await repositoryItems.DeleteAsync(dbItem);
             return Ok(dbItem);
         }
 

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace lapCURDwebAPI.Controllers
 {
-    [Authorize]
+
     [Route("api/[controller]")]
     [ApiController]
     public class UserItemController(repositoryUserItem repositoryUserItems) : ControllerBase
